@@ -3,11 +3,10 @@ module github.com/michael-valdron/docker-auto-rebuild
 go 1.13
 
 require (
-	github.com/ReactiveX/RxGo v1.0.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.1.2 // indirect
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/kardianos/osext v0.0.0-20190222173326-2bc1f35cddc0 // indirect
-	github.com/reactivex/rxgo/v2 v2.5.0 // indirect
+	github.com/reactivex/rxgo/v2 v2.5.0
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
