@@ -6,7 +6,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
-func startWatching(watcher *fsnotify.Watcher, stop <-chan bool) {
+func startWatching(watcher *fsnotify.Watcher, stop <-chan bool, observeEvent func(interface{})) {
 	go func() {
 		for {
 			select {
@@ -16,10 +16,7 @@ func startWatching(watcher *fsnotify.Watcher, stop <-chan bool) {
 				if !ok {
 					return
 				}
-				log.Println("event:", event)
-				if event.Op&fsnotify.Write == fsnotify.Write {
-					log.Println("modified file:", event.Name)
-				}
+				observeEvent(event)
 			case err, ok := <-watcher.Errors:
 				if !ok {
 					return
@@ -30,14 +27,14 @@ func startWatching(watcher *fsnotify.Watcher, stop <-chan bool) {
 	}()
 }
 
-func Watch(stop <-chan bool, done chan<- bool) {
+func Watch(stop <-chan bool, done chan<- bool, observeEvent func(interface{})) {
 	watcher, err := fsnotify.NewWatcher()
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer watcher.Close()
 
-	startWatching(watcher, stop)
+	startWatching(watcher, stop, observeEvent)
 
 	err = watcher.Add(".")
 	if err != nil {
