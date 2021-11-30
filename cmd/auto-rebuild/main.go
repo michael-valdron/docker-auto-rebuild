@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"os"
 
 	"github.com/michael-valdron/docker-auto-rebuild/pkg/observer"
 	"github.com/michael-valdron/docker-auto-rebuild/pkg/watcher"
@@ -22,7 +23,7 @@ func createFlags() *Flags {
 		signal: flag.String("s", "", `Send signal to the daemon:
 			quit — graceful shutdown
 			stop — fast shutdown
-			reload — reloading the configuration file`),
+			redeploy — redeploys container(s) with changes`),
 		target: flag.String("t", ".", "Target directory to watch, e.g. /path/to/target"),
 	}
 }
@@ -39,6 +40,7 @@ func createArgsString(flags *Flags) []string {
 
 func runBuilder(stop <-chan bool, done chan<- bool, workingDir string) {
 	observableCh := observer.CreateObserverChannel()
+	defer close(observableCh)
 
 	log.Println("- - - - - - - - - - - - - - -")
 	log.Printf("Watching '%s'...\n", workingDir)
@@ -46,7 +48,8 @@ func runBuilder(stop <-chan bool, done chan<- bool, workingDir string) {
 		observer.ObserveItem(observableCh, value)
 	})
 
-	observer.AutoBuild(observableCh)
+	workingDir, _ = os.Getwd()
+	observer.AutoBuild(observableCh, workingDir)
 }
 
 func main() {
