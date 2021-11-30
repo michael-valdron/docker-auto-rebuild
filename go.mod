@@ -9,7 +9,7 @@ require (
 	github.com/reactivex/rxgo/v2 v2.5.0
 	github.com/sevlyar/go-daemon v0.1.5
 	github.com/stretchr/objx v0.3.0 // indirect
-	github.com/stretchr/testify v1.7.0 // indirect
+	github.com/stretchr/testify v1.7.0
 	github.com/teivah/onecontext v1.3.0 // indirect
 	golang.org/x/sys v0.0.0-20211124211545-fe61309f8881 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
