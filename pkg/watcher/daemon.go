@@ -5,6 +5,7 @@ import (
 	"os"
 	"syscall"
 
+	"github.com/michael-valdron/docker-auto-rebuild/pkg/container"
 	"github.com/sevlyar/go-daemon"
 )
 
@@ -22,15 +23,14 @@ func termHandler(sig os.Signal) error {
 	return daemon.ErrStop
 }
 
-func reloadHandler(sig os.Signal) error {
-	log.Println("config reloaded")
-	return nil
+func redeployHandler(sig os.Signal) error {
+	return container.RunRedeploy()
 }
 
 func addCommands(signal *string) {
 	daemon.AddCommand(daemon.StringFlag(signal, "quit"), syscall.SIGQUIT, termHandler)
 	daemon.AddCommand(daemon.StringFlag(signal, "stop"), syscall.SIGTERM, termHandler)
-	daemon.AddCommand(daemon.StringFlag(signal, "reload"), syscall.SIGHUP, reloadHandler)
+	daemon.AddCommand(daemon.StringFlag(signal, "redeploy"), syscall.SIGHUP, redeployHandler)
 }
 
 func sendSignal(cxt *daemon.Context) error {
