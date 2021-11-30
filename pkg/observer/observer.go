@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
+	"github.com/michael-valdron/docker-auto-rebuild/pkg/container"
 	"github.com/michael-valdron/docker-auto-rebuild/pkg/utils"
 	"github.com/reactivex/rxgo/v2"
 )
@@ -14,20 +15,19 @@ func areWriteEvents(item interface{}) bool {
 	return event.Op&fsnotify.Write == fsnotify.Write
 }
 
-func areChanges(item interface{}, hashesCh chan map[string]string) bool {
+func areChanges(item interface{}, cache map[string]string) bool {
 	event := item.(fsnotify.Event)
-	hashes := <-hashesCh
 	filename := event.Name
 	newHash := utils.CreateFileHash(filename)
-	hash, isInMap := hashes[filename]
+	hash, isInMap := cache[filename]
 	isDiff := true
 
 	if isInMap {
 		isDiff = hash != newHash
 	}
 
-	hashes[filename] = newHash
-	hashesCh <- hashes
+	cache[filename] = newHash
+
 	return isDiff
 }
 
@@ -39,22 +39,19 @@ func ObserveItem(observableCh chan<- rxgo.Item, value interface{}) {
 	observableCh <- rxgo.Item{V: value}
 }
 
-func AutoBuild(observableCh <-chan rxgo.Item) {
+func AutoBuild(observableCh <-chan rxgo.Item, workingDir string) {
 	const DEBOUNCE_DURATION = time.Second
-	hashesCh := make(chan map[string]string)
-	hashesCh <- make(map[string]string)
-	observable := rxgo.FromChannel(observableCh).
+	cache := utils.CreateFilesCache(workingDir)
+	fileEvents := rxgo.FromChannel(observableCh).
 		Filter(areWriteEvents).
-		Debounce(rxgo.WithDuration(DEBOUNCE_DURATION)).
-		Filter(func(item interface{}) bool {
-			return areChanges(item, hashesCh)
-		})
-	defer close(hashesCh)
+		Debounce(rxgo.WithDuration(DEBOUNCE_DURATION))
 
-	for item := range observable.Observe() {
+	for item := range fileEvents.Observe() {
 		if item.Error() {
 			log.Fatal(item.E.Error())
 		}
-		log.Println("modified file:", item.V.(fsnotify.Event).Name)
+		if areChanges(item.V, cache) {
+			container.RunBuild()
+		}
 	}
 }
