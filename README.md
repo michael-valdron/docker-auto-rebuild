@@ -131,6 +131,7 @@ img/*
 
 A supporting configuration file would allow for a more extensive auto rebuilding configuration. One of which can be expanding on ignores file by incorporating whether to ignore the patterns or include the patterns. Using a configuration file, we can also specify further details about how to rebuild versus redeploy, i.e. defining the time interval of performing rebuilds before performing redeploy, which can be done using debouce as done with file change events.
 
+Example `dabconfig.yml`:
 ```yml
 # ...
 # Only watch these pattern
