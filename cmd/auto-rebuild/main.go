@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/michael-valdron/docker-auto-rebuild/pkg/observer"
+	"github.com/michael-valdron/docker-auto-rebuild/pkg/utils"
 	"github.com/michael-valdron/docker-auto-rebuild/pkg/watcher"
 	"github.com/sevlyar/go-daemon"
 )
@@ -38,9 +39,12 @@ func createArgsString(flags *Flags) []string {
 	return args
 }
 
-func runBuilder(stop <-chan bool, done chan<- bool, workingDir string) {
+func runBuilder(stop <-chan bool, done chan<- bool) {
 	observableCh := observer.CreateObserverChannel()
 	defer close(observableCh)
+
+	workingDir, _ := os.Getwd()
+	utils.InitFilesCache(workingDir)
 
 	log.Println("- - - - - - - - - - - - - - -")
 	log.Printf("Watching '%s'...\n", workingDir)
@@ -48,7 +52,6 @@ func runBuilder(stop <-chan bool, done chan<- bool, workingDir string) {
 		observer.ObserveItem(observableCh, value)
 	})
 
-	workingDir, _ = os.Getwd()
 	observer.AutoBuild(observableCh, workingDir)
 }
 
@@ -65,7 +68,5 @@ func main() {
 		WorkDir:     *flags.target,
 		Umask:       027,
 		Args:        createArgsString(flags),
-	}, func(cxt *daemon.Context, stop <-chan bool, done chan<- bool) {
-		runBuilder(stop, done, cxt.WorkDir)
-	}, flags.signal)
+	}, runBuilder, flags.signal)
 }
