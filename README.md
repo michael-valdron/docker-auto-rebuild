@@ -148,6 +148,11 @@ deployment:
 # ...
 ```
 
+## TODOs
+
+- [ ] Add functionality for file pattern ignores
+- [ ] Add configuration file
+
 ## Author\(s\)
 
 - Michael Valdron
