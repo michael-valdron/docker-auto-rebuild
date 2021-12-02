@@ -1,5 +1,7 @@
 # Docker Auto Rebuild
 
+[![Go Testing](https://github.com/michael-valdron/docker-auto-rebuild/actions/workflows/testing.yml/badge.svg)](https://github.com/michael-valdron/docker-auto-rebuild/actions/workflows/testing.yml)
+
 *Notice: This project is a **Proof of Concept** and not yet a working tool.*
 
 ## Introduction
