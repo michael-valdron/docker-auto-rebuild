@@ -56,3 +56,8 @@ func InitFilesCache(workingDir string) {
 		log.Fatal(err)
 	}
 }
+
+func FlushCache() {
+	cache := CreateCache()
+	cache.Flush()
+}
