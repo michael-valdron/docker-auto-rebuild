@@ -38,17 +38,17 @@ func IsFileInComponent(componentPath string, filename string) bool {
 }
 
 func RunBuild(buildPath string) error {
-	log.Println("Running build...")
+	log.Printf("Running build on '%s'...\n", buildPath)
 	time.Sleep(time.Minute)
-	log.Println("Finished build.")
+	log.Printf("Finished build on '%s'.", buildPath)
 	return nil
 }
 
 func RunRedeploy(componentName string) error {
-	log.Println("Stopping container...")
+	log.Printf("Stopping container '%s'...\n", componentName)
 	time.Sleep(3 * time.Second)
 	log.Println("Container stopped.")
-	log.Println("Creating/Starting container...")
+	log.Printf("Creating/Starting container '%s'...", componentName)
 	time.Sleep(time.Second)
 	log.Println("Container started.")
 	return nil
