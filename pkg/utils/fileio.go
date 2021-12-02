@@ -23,3 +23,17 @@ func CreateFileHash(filename string) string {
 
 	return string(hasher.Sum(nil))
 }
+
+func GetOrCreateFileHash(filename string) string {
+	value := GetCacheValue(filename)
+	var result string
+
+	if value == nil {
+		result = CreateFileHash(filename)
+		SetCacheValue(filename, result)
+	} else {
+		result = *value
+	}
+
+	return result
+}

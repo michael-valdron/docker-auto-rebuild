@@ -15,18 +15,16 @@ func areWriteEvents(item interface{}) bool {
 	return event.Op&fsnotify.Write == fsnotify.Write
 }
 
-func areChanges(item interface{}, cache map[string]string) bool {
+func areChanges(item interface{}) bool {
 	event := item.(fsnotify.Event)
 	filename := event.Name
 	newHash := utils.CreateFileHash(filename)
-	hash, isInMap := cache[filename]
-	isDiff := true
+	hash := utils.GetOrCreateFileHash(filename)
+	isDiff := hash != newHash
 
-	if isInMap {
-		isDiff = hash != newHash
+	if isDiff {
+		utils.SetCacheValue(filename, newHash)
 	}
-
-	cache[filename] = newHash
 
 	return isDiff
 }
@@ -41,7 +39,6 @@ func ObserveItem(observableCh chan<- rxgo.Item, value interface{}) {
 
 func AutoBuild(observableCh <-chan rxgo.Item, workingDir string) {
 	const DEBOUNCE_DURATION = time.Second
-	cache := utils.CreateFilesCache(workingDir)
 	fileEvents := rxgo.FromChannel(observableCh).
 		Filter(areWriteEvents).
 		Debounce(rxgo.WithDuration(DEBOUNCE_DURATION))
@@ -50,7 +47,7 @@ func AutoBuild(observableCh <-chan rxgo.Item, workingDir string) {
 		if item.Error() {
 			log.Fatal(item.E.Error())
 		}
-		if areChanges(item.V, cache) {
+		if areChanges(item.V) {
 			container.RunBuild()
 		}
 	}
