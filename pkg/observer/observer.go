@@ -48,6 +48,6 @@ func AutoBuild(observableCh <-chan rxgo.Item, workingDir string) {
 		if item.Error() {
 			log.Fatal(item.E.Error())
 		}
-		container.RunBuild()
+		container.RunBuild(workingDir)
 	}
 }

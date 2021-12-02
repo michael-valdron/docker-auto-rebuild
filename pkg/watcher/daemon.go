@@ -24,7 +24,7 @@ func termHandler(sig os.Signal) error {
 }
 
 func redeployHandler(sig os.Signal) error {
-	return container.RunRedeploy()
+	return container.RunRedeploy("")
 }
 
 func addCommands(signal *string) {
