@@ -16,3 +16,10 @@ func TestIsComponentDirectory(t *testing.T) {
 func TestGetComponentDirectories(t *testing.T) {
 	assert.Equal(t, 2, len(container.GetComponentDirectories("../../examples/docker-project")))
 }
+
+func TestIsFileInComponent(t *testing.T) {
+	assert.True(t, container.IsFileInComponent("../../examples/docker-project/hello-world", "../../examples/docker-project/hello-world/Dockerfile"))
+	assert.True(t, container.IsFileInComponent("../../examples/docker-project/nodejs", "../../examples/docker-project/nodejs/test/test.js"))
+	assert.False(t, container.IsFileInComponent("../../examples/docker-project/hello-world", "../../examples/docker-project/nodejs/test/test.js"))
+	assert.False(t, container.IsFileInComponent("../../examples/docker-project/nodejs", "../../examples/docker-project/hello-world/Dockerfile"))
+}

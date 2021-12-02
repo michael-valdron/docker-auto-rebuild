@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -32,7 +33,11 @@ func GetComponentDirectories(projectPath string) []string {
 	return components
 }
 
-func RunBuild(buildDirectory string) error {
+func IsFileInComponent(componentPath string, filename string) bool {
+	return strings.Contains(filename, componentPath)
+}
+
+func RunBuild(buildPath string) error {
 	log.Println("Running build...")
 	time.Sleep(time.Minute)
 	log.Println("Finished build.")
