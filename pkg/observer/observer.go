@@ -38,17 +38,16 @@ func ObserveItem(observableCh chan<- rxgo.Item, value interface{}) {
 }
 
 func AutoBuild(observableCh <-chan rxgo.Item, workingDir string) {
-	const DEBOUNCE_DURATION = time.Second
+	const DEBOUNCE_DURATION = 3 * time.Second
 	fileEvents := rxgo.FromChannel(observableCh).
 		Filter(areWriteEvents).
-		Debounce(rxgo.WithDuration(DEBOUNCE_DURATION))
+		Debounce(rxgo.WithDuration(DEBOUNCE_DURATION)).
+		Filter(areChanges)
 
 	for item := range fileEvents.Observe() {
 		if item.Error() {
 			log.Fatal(item.E.Error())
 		}
-		if areChanges(item.V) {
-			container.RunBuild()
-		}
+		container.RunBuild()
 	}
 }
