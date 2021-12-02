@@ -13,17 +13,17 @@ func GetCacheName() string {
 	return "fileHashes"
 }
 
-func CreateCache() *cache2go.CacheTable {
+func GetOrCreateCache() *cache2go.CacheTable {
 	return cache2go.Cache(GetCacheName())
 }
 
 func SetCacheValue(key string, value string) {
-	cache := CreateCache()
+	cache := GetOrCreateCache()
 	cache.Add(key, 10*time.Minute, value)
 }
 
 func GetCacheValue(key string) *string {
-	cache := CreateCache()
+	cache := GetOrCreateCache()
 	var value *string = nil
 
 	if cache.Exists(key) {
@@ -58,6 +58,6 @@ func InitFilesCache(workingDir string) {
 }
 
 func FlushCache() {
-	cache := CreateCache()
+	cache := GetOrCreateCache()
 	cache.Flush()
 }
