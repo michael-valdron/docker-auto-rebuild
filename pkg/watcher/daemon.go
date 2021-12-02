@@ -50,7 +50,7 @@ func listenForSignals() error {
 	return err
 }
 
-func RunDaemon(cxt *daemon.Context, worker func(*daemon.Context, <-chan bool, chan<- bool), signal *string) {
+func RunDaemon(cxt *daemon.Context, worker func(<-chan bool, chan<- bool), signal *string) {
 	addCommands(signal)
 
 	if len(daemon.ActiveFlags()) > 0 {
@@ -67,7 +67,7 @@ func RunDaemon(cxt *daemon.Context, worker func(*daemon.Context, <-chan bool, ch
 	}
 	defer cxt.Release()
 
-	go worker(cxt, stop, done)
+	go worker(stop, done)
 
 	listenForSignals()
 
