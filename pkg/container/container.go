@@ -9,6 +9,15 @@ import (
 	"time"
 )
 
+type ComponentFile struct {
+	ComponentPath string
+	Filename      string
+}
+
+func (compFile ComponentFile) IsFileInComponent() bool {
+	return strings.Contains(compFile.Filename, compFile.ComponentPath)
+}
+
 func IsComponentDirectory(path string) bool {
 	buildFile := filepath.Join(path, "Dockerfile")
 	_, err := os.Stat(buildFile)
@@ -33,14 +42,11 @@ func GetComponentDirectories(projectPath string) []string {
 	return components
 }
 
-func IsFileInComponent(componentPath string, filename string) bool {
-	return strings.Contains(filename, componentPath)
-}
-
 func RunBuild(buildPath string) error {
-	log.Printf("Running build on '%s'...\n", buildPath)
-	time.Sleep(time.Minute)
-	log.Printf("Finished build on '%s'.", buildPath)
+	componentName := filepath.Base(buildPath)
+	log.Printf("Running build on '%s'...\n", componentName)
+	time.Sleep(10 * time.Second)
+	log.Printf("Finished build on '%s'.", componentName)
 	return nil
 }
 
