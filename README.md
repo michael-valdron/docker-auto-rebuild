@@ -90,9 +90,9 @@ go func() {
 
 The ReactiveX \(rxgo\) API was selected for providing observable streams in order to optimize the concurrency of building component container images off of the incoming file change events. While inserting file change events into a channel as mentioned under fsnotify, the prebuild process creates an observable stream which listens to the same channel for events.
 
-<div style="text-align: center;">
+<p style="text-align: center;">
     <img alt="file watcher to channel to observable" src="img/watcher-to-builder.png"/>
-</div>
+</p>
 
 Once the observable stream with the pipeline is defined the process then begins iteration which invokes `observable.Observe()` to begin the evaluation of the stream. When a file event is recorded by the watching routine, it is sent through the pipeline filtered and evaluated. One filter in the pipeline of note for optimizing the building process is *debounce*. With *debounce*, rapid recorded file events can be filtered to the latest one of a particular time interval, say one second, so that requests to build are more moderate in size. We can see a visual of *debounce* below \[1\]:
 
