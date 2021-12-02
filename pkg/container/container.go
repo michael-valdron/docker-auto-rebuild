@@ -32,14 +32,14 @@ func GetComponentDirectories(projectPath string) []string {
 	return components
 }
 
-func RunBuild() error {
+func RunBuild(buildDirectory string) error {
 	log.Println("Running build...")
 	time.Sleep(time.Minute)
 	log.Println("Finished build.")
 	return nil
 }
 
-func RunRedeploy() error {
+func RunRedeploy(componentName string) error {
 	log.Println("Stopping container...")
 	time.Sleep(3 * time.Second)
 	log.Println("Container stopped.")
